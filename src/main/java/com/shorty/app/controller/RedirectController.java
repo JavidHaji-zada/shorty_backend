@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 @RestController
 public class RedirectController {
@@ -74,11 +73,11 @@ public class RedirectController {
             // add redirect to user redirects
             Session session = sessionService.findBySessionID(sessionID)
                     .orElseThrow(() -> new BadRequestException("Incorrect session id"));
-            redirect = redirectService.createRedirect(redirectCreationRequest, sessionID).orElseThrow();
+            redirect = redirectService.createRedirect(redirectCreationRequest, sessionID).orElseThrow(() -> new BadRequestException("Could not create a redirect"));
             userService.addRedirectToUser(redirect, session.getUser().getEmail());
         } else {
             System.out.println("Session is empty");
-            redirect = redirectService.createRedirect(redirectCreationRequest, sessionID).orElseThrow();
+            redirect = redirectService.createRedirect(redirectCreationRequest, sessionID).orElseThrow(() -> new BadRequestException("Could not create a redirect"));
         }
         ObjectNode response = new ObjectMapper().createObjectNode();
         response.put("url", redirect.getUrl());
