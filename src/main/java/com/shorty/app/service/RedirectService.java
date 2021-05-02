@@ -11,6 +11,7 @@ import com.shorty.app.request.RedirectDeletionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,7 +24,7 @@ public class RedirectService {
         this.redirectRepository = redirectRepository;
     }
 
-    public Optional<Redirect> createRedirect(RedirectCreationRequest redirectCreationRequest, String sessionID) {
+    public Optional<Redirect> createRedirect(RedirectCreationRequest redirectCreationRequest, Session session) {
         if (redirectRepository.existsByAlias(redirectCreationRequest.getAlias())) {
             System.out.println("Alias already exists");
             throw new BadRequestException("Alias already exists");
@@ -35,19 +36,34 @@ public class RedirectService {
                 alias = Redirect.generateRandomAlias();
             }
         }
-        Redirect redirect = new Redirect(alias, redirectCreationRequest.getUrl(), 0, null);
-
+        Redirect redirect;
+        if (session != null) {
+            redirect = new Redirect(alias, redirectCreationRequest.getUrl(), 0, session.getUser().getId());
+        } else {
+            redirect = new Redirect(alias, redirectCreationRequest.getUrl(), 0, null);
+        }
         Redirect postSaveRedirect = redirectRepository.save(redirect);
         System.out.println("Redirect" + postSaveRedirect);
 
         return Optional.ofNullable(postSaveRedirect);
     }
 
-    public void deleteRedirect(RedirectDeletionRequest redirectDeletionRequest) {
-        if (!redirectRepository.existsByAlias(redirectDeletionRequest.getAlias())) {
+    public List<Redirect> getRedirects(User user) {
+        System.out.println("Find redirects by user " + user.getId());
+        if (user.getRole().equals("ADMIN")) {
+            System.out.println("User role is admin");
+            return redirectRepository.findAll();
+        } else {
+            System.out.println("User role is user");
+            return redirectRepository.findByUserID(user.getId());
+        }
+    }
+
+    public void deleteRedirect(String alias) {
+        if (!redirectRepository.existsByAlias(alias)) {
             throw new BadRequestException("Alias does not exist in our database");
         }
-        redirectRepository.deleteById(redirectDeletionRequest.getId());
+        redirectRepository.deleteByAlias(alias);
     }
 
     public Redirect getRedirect(String alias) {

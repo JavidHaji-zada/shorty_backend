@@ -37,15 +37,11 @@ public class User {
 
     private Boolean enabled = false;
 
-    private List<Redirect> redirects;
-
-    public User(@NotEmpty @Email String email, String password, @NotNull String name, String role,
-            List<Redirect> redirects) {
+    public User(@NotEmpty @Email String email, String password, @NotNull String name, String role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = (role == null || role.isEmpty()) ? "USER" : role;
-        this.redirects = redirects;
     }
 
     public String getId() {
@@ -76,18 +72,9 @@ public class User {
         this.enabled = enabled;
     }
 
-    public List<Redirect> getRedirects() {
-        return redirects;
-    }
-
-    public void setRedirects(List<Redirect> redirects) {
-        this.redirects = redirects;
-    }
-
     @Override
     public String toString() {
         return "User{" + "id=" + id + ", email='" + email + '\'' + ", password='" + password + '\'' + ", name='" + name
-                + '\'' + ", redirects='" + redirects + '\'' + ", enabled='" + enabled + '\'' + ", role='" + role + '\''
-                + '}';
+                + '\'' + ", redirects='" + ", enabled='" + enabled + '\'' + ", role='" + role + '\'' + '}';
     }
 }

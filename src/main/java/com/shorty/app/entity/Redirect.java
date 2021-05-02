@@ -6,11 +6,8 @@ import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 @Entity
 @Document(collection = "redirect")
@@ -29,15 +26,14 @@ public class Redirect {
     @Column
     private int numberOfClicks;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
-    private User user;
+    @Column
+    private String userID;
 
-    public Redirect(final String alias, final String url, final int numberOfClicks, final User user) {
+    public Redirect(final String alias, final String url, final int numberOfClicks, final String userID) {
         this.alias = alias;
         this.url = url;
         this.numberOfClicks = numberOfClicks;
-        this.user = user;
+        this.userID = userID;
     }
 
     @Override
@@ -61,6 +57,10 @@ public class Redirect {
         return numberOfClicks;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
     public void setNumberOfClicks(int numberOfClicks) {
         this.numberOfClicks = numberOfClicks;
     }
@@ -79,6 +79,6 @@ public class Redirect {
         }
         String saltStr = salt.toString();
         return saltStr;
-
     }
+
 }

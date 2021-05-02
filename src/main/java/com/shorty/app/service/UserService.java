@@ -41,7 +41,7 @@ public class UserService {
 
         System.out.println("User Request " + userCreationRequest.toString());
         User newUser = new User(userCreationRequest.getEmail(), userCreationRequest.getPassword(),
-                userCreationRequest.getName(), userCreationRequest.getRole(), new ArrayList<Redirect>());
+                userCreationRequest.getName(), userCreationRequest.getRole());
 
         System.out.println("User" + newUser);
         User user = userRepository.save(newUser);
@@ -74,15 +74,17 @@ public class UserService {
         confirmationTokenService.deleteConfirmationToken(confirmationToken.getId());
     }
 
-    public void addRedirectToUser(Redirect redirect, String email) {
-        User user = loadUserByEmail(email);
-        user.getRedirects().add(redirect);
-        userRepository.save(user);
-    }
+    // public void addRedirectToUser(Redirect redirect, String email) {
+    // User user = loadUserByEmail(email);
+    // user.getRedirects().add(redirect);
+    // userRepository.save(user);
+    // }
 
-    public void deleteRedirectFromUser(RedirectDeletionRequest redirectDeletionRequest, String email) {
-        User user = loadUserByEmail(email);
-        user.getRedirects().removeIf(redirect -> redirect.getAlias().equals(redirectDeletionRequest.getAlias()));
-        userRepository.save(user);
-    }
+    // public void deleteRedirectFromUser(RedirectDeletionRequest
+    // redirectDeletionRequest, String email) {
+    // User user = loadUserByEmail(email);
+    // user.getRedirects().removeIf(redirect ->
+    // redirect.getAlias().equals(redirectDeletionRequest.getAlias()));
+    // userRepository.save(user);
+    // }
 }
