@@ -6,6 +6,7 @@ import com.shorty.app.entity.Session;
 import com.shorty.app.entity.User;
 import com.shorty.app.exception.AccountNotActivatedException;
 import com.shorty.app.exception.IncorrectPasswordException;
+import com.shorty.app.exception.UnauthorizedRequestException;
 import com.shorty.app.request.UserCreationRequest;
 import com.shorty.app.request.UserLoginRequest;
 import com.shorty.app.service.ConfirmationTokenService;
@@ -63,5 +64,12 @@ public class AuthController {
                 .findConfirmationTokenByToken(token);
         optionalConfirmationToken.ifPresent(userService::confirmUser);
         return "E-mail Confirmed";
+    }
+
+    @GetMapping("/users/user")
+    public ResponseEntity<User> getUser(@RequestHeader("sessionID") String sessionID) {
+        Session session = sessionService.findBySessionID(sessionID)
+                .orElseThrow(() -> new UnauthorizedRequestException("Incorrect session id"));
+        return ResponseEntity.ok(userService.loadUserByEmail(session.getUser().getEmail()));
     }
 }

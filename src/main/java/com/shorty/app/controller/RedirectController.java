@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,7 +38,7 @@ public class RedirectController {
     }
 
     @GetMapping("/{alias}")
-    public ResponseEntity<?> handleRedirect(@PathVariable String alias) {
+    public String handleRedirect(HttpServletRequest request, @PathVariable String alias) {
         Redirect redirect = redirectService.getRedirect(alias);
         URI uri = null;
         try {
@@ -48,9 +49,8 @@ public class RedirectController {
 
         redirect.setNumberOfClicks(redirect.getNumberOfClicks() + 1);
         redirectService.updateRedirect(redirect);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(uri);
-        return new ResponseEntity<>(httpHeaders, HttpStatus.MOVED_PERMANENTLY);
+        String redirectUrl = request.getScheme() + "://" + uri;
+        return "redirect:" + redirectUrl;
     }
 
     @DeleteMapping("/redirects/{alias}")
